@@ -1,0 +1,21 @@
+{
+  "name": "website-backend",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "co": "^4.6.0",
+    "cookie": "^0.2.3",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "mongodb": "^2.1.16"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "mutefish0",
+  "license": "ISC"
+}
