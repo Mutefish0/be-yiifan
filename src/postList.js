@@ -2,12 +2,11 @@ let Article = require('./model/Article')
 
 // Test...
 setTimeout(_ => {
-  Article.insert({
-    title: 'test',
-    content: 'testing...',
-    date: '1223'
-  }).then(result => {
-    console.log(result.result)
+  Article.deleteAll({item: 'box'}).then(result =>{
+    console.log('updated !')
+    console.log(result)
+  }, err => {
+    console.log(err)
   })
 }, 2000)
 
