@@ -4,9 +4,7 @@ let app = express()
 let bodyParser = require('body-parser')
 let session = require('express-session')
 
-let poster = require('./poster')
-
-
+let posterPromise = require('./poster')
 
 module.exports = port => new Promise((resolve, reject) => {
 
@@ -22,10 +20,9 @@ module.exports = port => new Promise((resolve, reject) => {
     saveUninitialized: true
   }))
 
-  //
-  poster(app)
-
-  app.listen(port)
-
-  console.log('服务器已启动...')
+  posterPromise.then(poster => {
+    poster(app)
+    app.listen(port)
+    console.log('服务器已完成启动...')
+  })
 })

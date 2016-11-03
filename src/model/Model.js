@@ -1,77 +1,73 @@
-let getDatabase = require('../database')
-let database
+let databasePromise = require('../database')
 
-// 挂载集合
-function mountCollection(db, collectionName) {
-   //strict:true 检查集合是否存在
-    db.collection(collectionName, {strict: true}, (err, col) => {
-      if(err) {
-        console.log(`连接集合'${collectionName}'失败...`)
-        console.log(err.message)
-      }
-      else {
-        this.collection = col
-        console.log(`连接集合'${collectionName}'成功...`)
-      }
-    })
-}
+databasePromise.then(db => {
+  console.log(`连接数据库'${db.databaseName}'成功...`)
+}, err => {
+  console.log('连接数据库失败')
+  console.log(err)
+})
 
-//字段映射
-function fieldsMap(queryFields, fields) {
-  let _field = {}
-  if(queryFields)
-    for(let key in queryFields)
-      _field[fields[key]] = queryFields[key]
-  return _field
-}
-
-function Model(collectionName, fields) {
+function Model(collectionName) {
   this.collectionName = collectionName
-
-  this.fields = fields || {}
-  this.fields.id = '_id'
-
-  if(database) mountCollection.call(this, database, collectionName)
-  else getDatabase().then(db => {
-    database = db
-    mountCollection.call(this, database, collectionName)
+  this.completedPromise = new Promise((resolve, reject) => {
+    databasePromise.then(db => {
+      db.collection(collectionName, (err, col) => {
+        if(err) {
+          reject()
+          console.log(`连接集合'${collectionName}'失败...`)
+        }
+        else {
+          this.collection = col
+          resolve(this)
+          console.log(`连接集合'${collectionName}'成功...`)
+        }
+      })
+    })
   })
 
+  Model.instances = Model.instances || []
+  Model.instances.push(this)
+
+}
+
+// 指明所有集合都已经连接完毕
+Model.waitCompleted = function() {
+    return Model.instances.reduce((prev, cur) => {
+      return new Promise(resolve => {
+        prev.then(_ => {
+          cur.completedPromise.then(_ => {
+            resolve()
+          })
+        })
+      })
+    }, new Promise(resolve => resolve()))
 }
 
 Model.prototype.findOne = function(condition, fields) {
-  let mapedCondition = fieldsMap(condition, this.fields)
-  let mapedFields = fieldsMap(fields, this.fields)
   return new Promise((resolve, reject) => {
-    this.collection.findOne(mapedCondition, mapedFields).then(doc => {
+    this.collection.findOne(condition, fields).then(doc => {
       resolve(doc)
     }, err => reject(err))
   })
 }
 
 Model.prototype.findAll = function(condition, fields) {
-  let mapedCondition = fieldsMap(condition, this.fields)
-  let mapedFields = fieldsMap(fields, this.fields)
   return new Promise((resolve, reject) => {
-    this.collection.find(mapedCondition, mapedFields).toArray().then(doc => {
-      resolve(doc)
+    this.collection.find(condition, fields).toArray().then(docs => {
+      resolve(docs)
     }, err => reject(err))
   })
 }
 
 Model.prototype.findLimit = function(condition, fields, limit) {
-  let mapedCondition = fieldsMap(condition, this.fields)
-  let mapedFields = fieldsMap(fields, this.fields)
   return new Promise((resolve, reject) => {
-    this.collection.find(mapedCondition, mapedFields).limit(limit).toArray().then(doc => {
-      resolve(doc)
+    this.collection.find(condition, fields).limit(limit).toArray().then(docs => {
+      resolve(docs)
     }, err => reject(err))
   })
 }
 
 Model.prototype.updateOne = function(condition, mutation) {
-  let mapedCondition = fieldsMap(condition, this.fields)
-  let mapedMutation = fieldsMap(mutation, this.fields)
   return new Promise((resolve, reject) => {
     this.collection.updateOne(condition, mutation).then(res => {
       if(res.result.ok == 1)
@@ -83,8 +79,6 @@ Model.prototype.updateOne = function(condition, mutation) {
 }
 
 Model.prototype.updateAll = function(condition, mutation) {
-  let mapedCondition = fieldsMap(condition, this.fields)
-  let mapedMutation = fieldsMap(mutation, this.fields)
   return new Promise((resolve, reject) => {
     this.collection.updateMany(condition, mutation).then(res => {
       if(res.result.ok == 1)
@@ -96,9 +90,8 @@ Model.prototype.updateAll = function(condition, mutation) {
 }
 
 Model.prototype.insert = function(doc) {
-  let mapedDoc = fieldsMap(doc, this.fields)
   return new Promise((resolve, reject) => {
-    this.collection.insertOne(mapedDoc).then(res => {
+    this.collection.insertOne(doc).then(res => {
     //如果result为ok则resolve生效数n
       if(res.result.ok == 1)
         resolve(res.result.n)
@@ -109,7 +102,6 @@ Model.prototype.insert = function(doc) {
 }
 
 Model.prototype.deleteOne = function(condition) {
-  let mapedCondition = fieldsMap(condition, this.fields)
   return new Promise((resolve, reject) => {
     this.collection.deleteOne(condition).then(res => {
     //如果result为ok则resolve生效数n
@@ -122,7 +114,6 @@ Model.prototype.deleteOne = function(condition) {
 }
 
 Model.prototype.deleteAll = function(condition) {
-  let mapedCondition = fieldsMap(condition, this.fields)
   return new Promise((resolve, reject) => {
     this.collection.deleteMany(condition).then(res => {
     //如果result为ok则resolve生效数n
