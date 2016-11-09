@@ -12,6 +12,7 @@ module.exports = port => new Promise((resolve, reject) => {
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({extended: true}))
 
+
   //使用express-session
   app.use(session({
     secret: 'MY_OWN_SECRET_AHA',
@@ -25,4 +26,5 @@ module.exports = port => new Promise((resolve, reject) => {
     app.listen(port)
     console.log('服务器已完成启动...')
   })
+
 })

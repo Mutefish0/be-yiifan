@@ -51,12 +51,17 @@ Model.prototype.findOne = function(condition, fields) {
   })
 }
 
-Model.prototype.findAll = function(condition, fields) {
-  return new Promise((resolve, reject) => {
-    this.collection.find(condition, fields).toArray().then(docs => {
-      resolve(docs)
-    }, err => reject(err))
-  })
+Model.prototype.findAll = function(condition, fields, opt) {
+    return new Promise((resolve, reject) => {
+      let cursor = this.collection.find(condition, fields)
+      opt = opt || {}
+      let offset = opt.offset, limit = opt.limit
+      if(offset && typeof(offset) == 'number') cursor = cursor.skip(offset)
+      if(limit && typeof(limit) == 'number') cursor = cursor.limit(limit)
+      cursor.toArray().then(docs => {
+        resolve(docs)
+      }, err => reject(err))
+    })
 }
 
 Model.prototype.findLimit = function(condition, fields, limit) {
@@ -94,7 +99,7 @@ Model.prototype.insert = function(doc) {
     this.collection.insertOne(doc).then(res => {
     //如果result为ok则resolve生效数n
       if(res.result.ok == 1)
-        resolve(res.result.n)
+        resolve(res.insertedId)
       else
         reject({message: '操作失败'})
     }, err => reject(err))

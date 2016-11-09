@@ -2,8 +2,10 @@ let Model =require('../model/Model')
 let apis = {}
 
 let article = require('./article')
+let user = require('./user')
 
 Object.assign(apis, article)
+Object.assign(apis, user)
 
 
 
