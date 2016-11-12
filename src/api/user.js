@@ -1,15 +1,16 @@
 let User = require('../model/User')
 let co = require('co')
-
 let validators = require('./validators')
+
 
 module.exports = {
 
   '/visit-website-user': {
-      requiredProps: ['domain'],
-      handler: co.wrap(function* ({ domain }, session) {
-        let users = yield User.findAll({}, {_id: 0, username: 1, own_domain: 1})
-        let filteredUsers  = users.filter(user => domain && domain.indexOf(user.own_domain) > -1)
+      requiredProps: ['href'],
+      validators: validators.AccessLog,
+      handler: co.wrap(function* ({ href }, session) {
+        let users = yield User.findAll({}, {_id: 0, username: 0, password: 0, join_time: 0})
+        let filteredUsers  = users.filter(user => href && href.indexOf(user.own_domain) > -1)
         session.user = filteredUsers[0]
         if(session.user) return session.user
         else return '对应域名没有指定的用户'

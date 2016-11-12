@@ -50,7 +50,7 @@ module.exports = new Promise(resolve => {
               if(typeof(validators) == 'function') validators = [validators]
               // 拦截验证器
               for(let i = 0; i < validators.length; i++) {
-                 let next = validators[i](req.session)
+                 let next = validators[i](req.session, req)
                  if(next != true) {
                    resp.json({ok: 0, message: next})
                    return
