@@ -59,7 +59,7 @@ module.exports = new Promise(resolve => {
 
               let resultPromise = handlerObject.handler(req.body, req.session)
 
-              if(!resultPromise instanceof Promise)
+              if(!(resultPromise instanceof Promise))
                 resultPromise = Promise.resolve(resultPromise)
               resultPromise.then(data => resp.json(sendBodyWraper(data)), err => {
                 console.log(err) // debug

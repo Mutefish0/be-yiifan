@@ -9,6 +9,7 @@ module.exports = {
       requiredProps: ['href'],
       validators: validators.AccessLog,
       handler: co.wrap(function* ({ href }, session) {
+        if(session.user) return session.user
         let users = yield User.findAll({}, {_id: 0, username: 0, password: 0, join_time: 0})
         let filteredUsers  = users.filter(user => href && href.indexOf(user.own_domain) > -1)
         session.user = filteredUsers[0]
@@ -40,7 +41,7 @@ module.exports = {
 
   '/check-sign-in': {
     validators: validators.CheckDomainUser,
-    handler: (body, session) => session.user.siginin? true: false
+    handler: (body, session) => session.user.signin? true: false
   },
 
   '/set-user-info': {
