@@ -10,4 +10,5 @@
   2. 运行 `node server --production &`
 
 # 开发 (本地)
-  运行 `node server --development` 
+  1. 克隆数据库到本地 `node cloneToDev`
+  2. 运行 `node server --development`
