@@ -1,3 +1,5 @@
+let allowOrigin = require('../env').allowOrigin
+
 let apisPromise = require('./api')
 
 function sendBodyWraper(sendBody) {
@@ -38,7 +40,7 @@ module.exports = new Promise(resolve => {
         for(let key in postList) {
           app.post(key, (req, resp) => {
             /* debug  start */
-            resp.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+            resp.setHeader('Access-Control-Allow-Origin', allowOrigin)
             resp.setHeader('Access-Control-Allow-Credentials', true)
            /* debug end */
             let handlerObject = postList[key]

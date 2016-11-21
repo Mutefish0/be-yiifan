@@ -2,14 +2,12 @@ let User = require('../model/User')
 let co = require('co')
 let validators = require('./validators')
 
-
 module.exports = {
 
   '/visit-website-user': {
       requiredProps: ['href'],
       validators: validators.AccessLog,
       handler: co.wrap(function* ({ href }, session) {
-        if(session.user) return session.user
         let users = yield User.findAll({}, {_id: 0, username: 0, password: 0, join_time: 0})
         let filteredUsers  = users.filter(user => href && href.indexOf(user.own_domain) > -1)
         session.user = filteredUsers[0]
@@ -24,7 +22,7 @@ module.exports = {
     handler: co.wrap(function* ({ password }, session) {
       let user = yield User.findOne({username: 'cheng', password})
       if(user) {
-        session.user.signin = true
+        session.signin = true
         return true
       }
       else return '密码错误...'
@@ -34,14 +32,14 @@ module.exports = {
   '/sign-out': {
     validators: validators.CheckDomainUser,
     handler: (body, session) => {
-      session.user.signin = false
+      session.signin = false
       return true
     }
   },
 
   '/check-sign-in': {
     validators: validators.CheckDomainUser,
-    handler: (body, session) => session.user.signin? true: false
+    handler: (body, session) => session.signin? true: false
   },
 
   '/set-user-info': {

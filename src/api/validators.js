@@ -7,7 +7,7 @@ validators.CheckDomainUser  = session => {
 }
 
 validators.CheckUserSignIn = [validators.CheckDomainUser, session => {
-  if(session.user.signin) return true
+  if(session.signin) return true
   else return '用户未登录...'
 }]
 
