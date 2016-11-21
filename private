@@ -1,0 +1,4 @@
+module.exports = {
+  developmentDatabaseUri: 'mongodb://dev:123456@localhost:27017/dev',        // modify
+  productionDatabaseUri:  'mongodb://oneuser:123456@somehost:27017/website'  // modify
+}
