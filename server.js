@@ -1,1 +1,2 @@
-require('./src/server')(80)
+let port = require('./env').port
+require('./src/server')(port)

@@ -8,11 +8,13 @@ let priv = require('./private')
 let exportObject = {
   development: {
     allowOrigin: 'http://localhost:8080',
-    databaseUri: priv.developmentDatabaseUri
+    databaseUri: priv.developmentDatabaseUri,
+    port: 80
   },
   production: {
     allowOrigin: 'http://predeploy.yiifan.xyz',
-    databaseUri: priv.productionDatabaseUri
+    databaseUri: priv.productionDatabaseUri,
+    port: 6483
   }
 }
 
