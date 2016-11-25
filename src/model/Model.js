@@ -55,9 +55,12 @@ Model.prototype.findAll = function(condition, fields, opt) {
     return new Promise((resolve, reject) => {
       let cursor = this.collection.find(condition, fields)
       opt = opt || {}
-      let offset = opt.offset, limit = opt.limit
+      let offset = opt.offset,
+          limit = opt.limit,
+          sort = opt.hasOwnProperty('sort') && opt.sort || undefined
       if(offset && typeof(offset) == 'number') cursor = cursor.skip(offset)
       if(limit && typeof(limit) == 'number') cursor = cursor.limit(limit)
+      if(sort && typeof(sort) == 'object') cursor = cursor.sort(sort)
       cursor.toArray().then(docs => {
         resolve(docs)
       }, err => reject(err))

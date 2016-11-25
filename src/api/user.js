@@ -8,7 +8,7 @@ module.exports = {
       requiredProps: ['href'],
       validators: validators.AccessLog,
       handler: co.wrap(function* ({ href }, session) {
-        let users = yield User.findAll({}, {_id: 0, username: 0, password: 0, join_time: 0})
+        let users = yield User.findAll({}, {_id: 0, password: 0, join_time: 0})
         let filteredUsers  = users.filter(user => href && href.indexOf(user.own_domain) > -1)
         session.user = filteredUsers[0]
         if(session.user) return session.user

@@ -20,10 +20,11 @@ module.exports = {
     validators: validators.CheckDomainUser,
     handler: (body, session) => {
       let username = session.user.username
-      return Article.findAll({user: username}, {user: 0})
+      // 倒序
+      return Article.findAll({user: username}, {user: 0}, { sort: {_id: -1}})
     }
   },
-  
+
   '/create-article': {
     requiredProps: [propArticleTitle, 'content'],
     validators: validators.CheckUserSignIn,
