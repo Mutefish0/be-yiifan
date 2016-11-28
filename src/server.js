@@ -18,7 +18,7 @@ module.exports = port => new Promise((resolve, reject) => {
     secret: 'MY_OWN_SECRET_AHA',
     cookie: { maxAge: 600000}, //10分钟
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false
   }))
 
   posterPromise.then(poster => {
