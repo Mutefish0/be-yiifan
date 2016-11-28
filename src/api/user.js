@@ -20,7 +20,7 @@ module.exports = {
     requiredProps: ['password'],
     validators: validators.CheckDomainUser,
     handler: co.wrap(function* ({ password }, session) {
-      let user = yield User.findOne({username: 'cheng', password})
+      let user = yield User.findOne({username: session.user.username, password})
       if(user) {
         session.signin = true
         return true
