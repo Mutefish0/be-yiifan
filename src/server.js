@@ -16,7 +16,7 @@ module.exports = port => new Promise((resolve, reject) => {
   //使用express-session
   app.use(session({
     secret: 'MY_OWN_SECRET_AHA',
-    cookie: { maxAge: 600000}, //10分钟
+    cookie: { maxAge: 2*3600*1000}, //2个小时
     resave: false,
     saveUninitialized: false
   }))

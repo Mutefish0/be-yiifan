@@ -29,12 +29,9 @@ module.exports = {
     })
   },
 
-  '/sign-out': {
-    validators: validators.CheckDomainUser,
-    handler: (body, session) => {
-      session.signin = false
-      return true
-    }
+  '/sign-out': (body, session) => {
+    session.signin = false
+    return true
   },
 
   '/check-sign-in': {
