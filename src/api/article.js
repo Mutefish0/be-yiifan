@@ -19,9 +19,8 @@ module.exports = {
   '/fetch-all-articles': {
     validators: validators.CheckDomainUser,
     handler: (body, session) => {
-      let username = session.user.username
       // 倒序
-      return Article.findAll({user: username}, {user: 0}, { sort: {_id: -1}})
+      return Article.findAll({user: session.username}, {user: 0}, { sort: {_id: -1}})
     }
   },
 
@@ -29,7 +28,7 @@ module.exports = {
     requiredProps: [propArticleTitle, 'content'],
     validators: validators.CheckUserSignIn,
     handler: co.wrap(function* ({title, content}, session) {
-      let id = yield Article.insert({title, content, user: session.user.username, date: (new Date()).getTime()})
+      let id = yield Article.insert({title, content, user: session.username, date: (new Date()).getTime()})
       return { id }
     })
   },
@@ -38,7 +37,7 @@ module.exports = {
     requiredProps: [propArticleId],
     validators: validators.CheckUserSignIn,
     handler: co.wrap(function* ({id}, session) {
-      let n = yield Article.deleteOne({_id: ObjectId(id), user: session.user.username})
+      let n = yield Article.deleteOne({_id: ObjectId(id), user: session.username})
       if(n == 1) return true
       else return false
     })
@@ -49,7 +48,7 @@ module.exports = {
     validators: validators.CheckUserSignIn,
     handler: co.wrap(function * ({ id, title, content }, session) {
       yield Article.updateOne(
-        { _id: ObjectId(id), user: session.user.username },
+        { _id: ObjectId(id), user: session.username },
         { $set: {title, content, date: (new Date()).getTime()} }
       )
       return true

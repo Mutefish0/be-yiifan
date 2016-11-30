@@ -1,8 +1,9 @@
 let validators = {}
 let Acclog = require('../model/Acclog')
+let mapOriginToUser = require('../../env').mapOriginToUser
 
 validators.CheckDomainUser  = session => {
-  if(session.user) return true
+  if(session.username) return true
   else return '对应域名没有指定用户...'
 }
 
@@ -18,9 +19,15 @@ function getClientIp(req) {
      req.connection.socket.remoteAddress;
  }
 
-validators.AccessLog = (session, req) => {
+validators.Access = (session, req) => {
+  // 获取网站作者
+  let username = mapOriginToUser[req.headers.origin]
+  if(username) session.username = username
+  else return '对应域名没有指定用户...'
+  //记录ip,域
   Acclog.insert({
     ip: getClientIp(req),
+    origin: req.headers.origin,
     date: (new Date()).getTime()
   })
   return true

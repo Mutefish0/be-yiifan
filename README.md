@@ -40,7 +40,6 @@
       "intro" : "前端攻城狮, 偶尔玩玩Node.js的伪全栈",
       "avatar" : "http://www.yiifan.xyz/images/avatar.jpg",
       "avatar_type" : "url",
-      "own_domain" : "localhost",
       "qq" : 648262030,
       "weibo" : "http://www.weibo.com/u/1655821812",
       "github" : "https://github.com/Mutefish0",
@@ -57,5 +56,3 @@
 }
 
   ```
-
-  
