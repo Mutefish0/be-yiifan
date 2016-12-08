@@ -2,6 +2,11 @@ let User = require('../model/User')
 let co = require('co')
 let validators = require('./validators')
 
+let propSex = {
+  name: 'sex',
+  pattern: /^male$|^female$/
+}
+
 module.exports = {
 
   '/visit-website-user': {
@@ -37,9 +42,13 @@ module.exports = {
   },
 
   '/set-user-info': {
+    requiredProps:['nickname',propSex,'intro','avatar','qq','weibo','github','zhihu'],
     validators: validators.CheckUserSignIn,
-    handler: co.wrap(function* ({nickname, sex, intro}, session) {
-      yield User.updateOne({username: session.username}, {$set: {nickname, sex, intro}})
+    handler: co.wrap(function* ({nickname, sex, intro, avatar, qq, weibo, github, zhihu}, session) {
+      yield User.updateOne(
+        {username: session.username},
+        {$set: {nickname, sex, intro, avatar, qq, weibo, github, zhihu}}
+      )
       return true
     })
   },
